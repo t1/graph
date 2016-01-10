@@ -39,18 +39,12 @@ public class Graph<T> {
                 return node.mark(this);
             }
 
+            default <T> boolean isMarked(Node<T> node) {
+                return node.isMarked(this);
+            }
+
             default <T> boolean unmark(Node<T> node) {
                 return node.unmark(this);
-            }
-        }
-
-        @Value
-        public static class StringMark implements Mark {
-            String string;
-
-            @Override
-            public String toString() {
-                return string;
             }
         }
 
@@ -98,12 +92,61 @@ public class Graph<T> {
         }
     }
 
+    @Value
+    public static class StringMark implements Mark {
+        String string;
+
+        @Override
+        public String toString() {
+            return string;
+        }
+    }
+
     private final List<Node<T>> nodes = new ArrayList<>();
 
     public Node<T> createNode(T value) {
         Node<T> node = new Node<>(value);
         nodes.add(node);
         return node;
+    }
+
+    /**
+     * @see <a href="https://en.wikipedia.org/wiki/Topological_sorting#Tarjan.27s_algorithm">wikipedia</a>
+     */
+    public void toplologicalSort() {
+        Mark temp = new StringMark("temporary");
+        Mark seen = new StringMark("seen");
+        Mark cycle = new StringMark("cycle");
+        List<Node<T>> sortedNodes = new LinkedList<>();
+
+        visit(new Consumer<Node<T>>() {
+            @Override
+            public void accept(Node<T> node) {
+                if (node.isMarked(seen))
+                    return;
+                if (node.isMarked(temp)) {
+                    node.mark(cycle);
+                } else {
+                    node.marked(temp);
+                    node.links.forEach(this);
+                    node.unmark(temp);
+                    sortedNodes.add(0, node);
+                }
+                node.mark(seen);
+            }
+        });
+
+        replaceNodes(sortedNodes);
+        unmark(seen);
+        List<Node<T>> cycleNodes = find(cycle);
+        cycleNodes.forEach(cycle::unmark);
+        if (!cycleNodes.isEmpty())
+            throw new CyclesFoundException(cycleNodes);
+    }
+
+    private void replaceNodes(List<Node<T>> nodes) {
+        this.nodes.clear();
+        this.nodes.addAll(nodes);
     }
 
     public int mark(Mark mark) {
@@ -121,6 +164,19 @@ public class Graph<T> {
                 count.incrementAndGet();
         });
         return count.get();
+    }
+
+    public List<Node<T>> find(Mark mark) {
+        return find(mark::isMarked);
+    }
+
+    public List<Node<T>> find(Predicate<Node<T>> predicate) {
+        List<Node<T>> found = new ArrayList<>();
+        visit(node -> {
+            if (predicate.test(node))
+                found.add(node);
+        });
+        return found;
     }
 
     public void visit(Consumer<Node<T>> visitor) {

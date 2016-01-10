@@ -50,4 +50,14 @@ public class GraphConditions {
     public static <T> Condition<Node<T>> marked(List<Mark> marks) {
         return new Condition<>(node -> node.getMarks().equals(marks), "marked as: " + marks);
     }
+
+    @SafeVarargs
+    public static <T> Condition<Throwable> cyclesFoundExceptionWithNodes(Node<T>... nodes) {
+        return cyclesFoundExceptionWithNodes(asList(nodes));
+    }
+
+    public static <T> Condition<Throwable> cyclesFoundExceptionWithNodes(List<Node<T>> nodes) {
+        return new Condition<>(exception -> ((CyclesFoundException) exception).getCycleNodes().equals(nodes),
+                "cycle nodes: " + nodeNames(nodes));
+    }
 }

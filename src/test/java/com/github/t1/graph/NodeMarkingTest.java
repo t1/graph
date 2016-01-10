@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
-import com.github.t1.graph.Graph.Node;
+import com.github.t1.graph.Graph.*;
 import com.github.t1.graph.Graph.Node.Mark;
 
 public class NodeMarkingTest {
-    private static final Mark m = new Node.StringMark("m");
+    private static final Mark m = new StringMark("m");
 
     @Test
     public void shouldMark() {
