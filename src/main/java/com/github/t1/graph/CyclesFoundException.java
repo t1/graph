@@ -2,8 +2,6 @@ package com.github.t1.graph;
 
 import java.util.List;
 
-import com.github.t1.graph.Graph.Node;
-
 import lombok.Getter;
 
 public class CyclesFoundException extends RuntimeException {

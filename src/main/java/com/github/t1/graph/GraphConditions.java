@@ -7,13 +7,10 @@ import java.util.List;
 
 import org.assertj.core.api.Condition;
 
-import com.github.t1.graph.Graph.Node;
-import com.github.t1.graph.Graph.Node.Mark;
-
 /**
- * <a href="http://joel-costigliola.github.io/assertj/index.html">AssertJ</a> conditions for graphs.
- * They are so helpful for testing graphs, that we don't hide them in our own tests but put them into the jar,
- * while keeping the dependency on AssertJ optional.
+ * <a href="http://joel-costigliola.github.io/assertj/index.html">AssertJ</a> conditions for graphs. They are so helpful
+ * for testing graphs, that we don't hide them in our own tests but put them into the jar, while keeping the dependency
+ * on AssertJ optional.
  */
 public class GraphConditions {
     public static Condition<Graph<?>> empty = new Condition<>(Graph::isEmpty, "empty");

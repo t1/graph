@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
-import com.github.t1.graph.Graph.Node;
-
 public class TopologicalSortTest {
     @Test
     public void shouldSortEmptyGraph() {

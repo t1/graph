@@ -5,8 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
-import com.github.t1.graph.Graph.*;
-import com.github.t1.graph.Graph.Node.Mark;
+import com.github.t1.graph.Graph.StringMark;
 
 public class NodeMarkingTest {
     private static final Mark m = new StringMark("m");
