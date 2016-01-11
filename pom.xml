@@ -28,7 +28,7 @@
         <repository>
             <id>bintray-t1-javaee-helpers</id>
             <name>t1-javaee-helpers-graph</name>
-            <url>https://api.bintray.com/maven/t1/javaee-helpers/graph</url>
+            <url>https://api.bintray.com/maven/t1/javaee-helpers/graph/;publish=1</url>
         </repository>
     </distributionManagement>
 
