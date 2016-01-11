@@ -1,4 +1,4 @@
-# Graph
+# Graph [ ![Download](https://api.bintray.com/packages/t1/javaee-helpers/graph/images/download.svg) ](https://bintray.com/t1/javaee-helpers/graph/_latestVersion)
 
 A straight forward Graph class with Nodes that support custom Marks.
 
