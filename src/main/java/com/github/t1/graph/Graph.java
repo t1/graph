@@ -1,6 +1,5 @@
 package com.github.t1.graph;
 
-import static java.lang.Math.min;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -10,7 +9,9 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 
-import lombok.*;
+import com.github.t1.graph.Mark.Index;
+
+import lombok.Data;
 
 @Data
 public class Graph<T> {
@@ -29,16 +30,6 @@ public class Graph<T> {
 
     public static <T> String listToString(String delimiter, List<T> list, Function<T, String> toString) {
         return String.join(delimiter, list.stream().map(toString).collect(toList()));
-    }
-
-    @Value
-    public static class StringMark implements Mark {
-        String string;
-
-        @Override
-        public String toString() {
-            return string;
-        }
     }
 
     private final List<Node<T>> nodes = new ArrayList<>();
@@ -63,47 +54,26 @@ public class Graph<T> {
         return node;
     }
 
-    @Value
-    private static class IndexMark implements Mark {
-        public static int of(Node<?> node) {
-            return node.getMark(IndexMark.class).get().getIndex();
-        }
-
-        int index;
-    }
-
-    @Value
-    private static class Lowlink implements Mark {
-        public static int removeLowlinkIndex(Node<?> v) {
-            return v.unmark(Lowlink.class).get().getIndex();
-        }
-
-        public static int of(Node<?> v) {
-            return v.getMark(Lowlink.class).get().getIndex();
-        }
-
-        int index;
-    }
-
-    private static Mark onStack = new StringMark("onStack");
-
-    /**
-     * @see <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"> Tarjan's
-     *      strongly connected components algorithm</a>
-     */
     public void topologicalSort() {
-        List<List<Node<T>>> stronglyConnectedComponents = new ArrayList<>();
-
-        AtomicInteger index = new AtomicInteger(0);
-        Stack<Node<T>> S = new Stack<>();
-        for (Node<T> v : nodes)
-            if (!v.getMark(IndexMark.class).isPresent())
-                strongconnect(v, stronglyConnectedComponents, S, index);
-
-        unmark(Lowlink.class);
-        unmark(IndexMark.class);
+        List<List<Node<T>>> stronglyConnectedComponents = findStronglyConnectedComponents();
 
         List<Node<T>> sorted = new ArrayList<>();
+        handleCycles(stronglyConnectedComponents, sorted);
+
+        reverse(sorted);
+        replaceNodes(sorted);
+    }
+
+    public List<List<Node<T>>> findStronglyConnectedComponents() {
+        StronglyConnectedComponentsFinder<T> visitor = new StronglyConnectedComponentsFinder<>();
+
+        visit(visitor);
+
+        cleanup();
+        return visitor.getStronglyConnectedComponents();
+    }
+
+    private void handleCycles(List<List<Node<T>>> stronglyConnectedComponents, List<Node<T>> sorted) {
         List<List<Node<T>>> cycles = new ArrayList<>();
         stronglyConnectedComponents.forEach(scc -> {
             if (scc.size() > 1)
@@ -115,47 +85,11 @@ public class Graph<T> {
         });
         if (!cycles.isEmpty())
             throw new CyclesFoundException(cycles);
-
-        reverse(sorted);
-        replaceNodes(sorted);
     }
 
-    private void strongconnect(Node<T> v, List<List<Node<T>>> stronglyConnectedComponents, Stack<Node<T>> S,
-            AtomicInteger index) {
-        // Set the depth index for v to the smallest unused index
-        int indexValue = index.getAndIncrement();
-        v.mark(new IndexMark(indexValue));
-        v.mark(new Lowlink(indexValue));
-        S.push(v);
-        v.mark(onStack);
-
-        // Consider successors of v
-        for (Node<T> w : v.getLinks()) {
-            if (!w.isMarked(IndexMark.class)) {
-                // Successor w has not yet been visited; recurse on it
-                strongconnect(w, stronglyConnectedComponents, S, index);
-                int vLowlink = Lowlink.removeLowlinkIndex(v);
-                int wLowlink = Lowlink.of(w);
-                v.mark(new Lowlink(min(vLowlink, wLowlink)));
-            } else if (w.isMarked(onStack)) {
-                // Successor w is in stack S and hence in the current SCC
-                int vLowlink = Lowlink.removeLowlinkIndex(v);
-                int wIndex = IndexMark.of(w);
-                v.mark(new Lowlink(min(vLowlink, wIndex)));
-            }
-        }
-
-        // If v is a root node, pop the stack and generate an SCC
-        if (Lowlink.of(v) == IndexMark.of(v)) {
-            List<Node<T>> stronglyConnectedComponent = new ArrayList<>();
-            Node<T> w;
-            do {
-                w = S.pop();
-                w.unmark(onStack);
-                stronglyConnectedComponent.add(w);
-            } while (w != v);
-            stronglyConnectedComponents.add(stronglyConnectedComponent);
-        }
+    private void cleanup() {
+        unmark(StronglyConnectedComponentsFinder.Root.class);
+        unmark(Index.class);
     }
 
     private void replaceNodes(List<Node<T>> nodes) {
