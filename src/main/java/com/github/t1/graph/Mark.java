@@ -14,4 +14,3 @@ public interface Mark {
         return node.unmark(this);
     }
 }
-

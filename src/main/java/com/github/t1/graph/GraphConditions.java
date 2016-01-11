@@ -36,6 +36,9 @@ public class GraphConditions {
         return new Condition<>(node -> node.isLinkedTo(nodes), "links to: " + nodeNames(nodes));
     }
 
+    public static final Condition<? super Graph<String>> noMarks =
+            new Condition<>(graph -> graph.find(node -> node.isMarked(Mark.class)).isEmpty(), "no marks");
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static final Condition<Node<?>> unmarked = (Condition) marked();
 
@@ -49,12 +52,13 @@ public class GraphConditions {
     }
 
     @SafeVarargs
-    public static <T> Condition<Throwable> cyclesFoundExceptionWithNodes(Node<T>... nodes) {
+    public static <T> Condition<Throwable> cycle(Node<T>... nodes) {
         return cyclesFoundExceptionWithNodes(asList(nodes));
     }
 
     public static <T> Condition<Throwable> cyclesFoundExceptionWithNodes(List<Node<T>> nodes) {
-        return new Condition<>(exception -> ((CyclesFoundException) exception).getCycleNodes().equals(nodes),
+        return new Condition<>(
+                exception -> exception != null && ((CyclesFoundException) exception).getCycles().contains(nodes),
                 "cycle nodes: " + nodeNames(nodes));
     }
 }

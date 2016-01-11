@@ -1,8 +1,10 @@
 package com.github.t1.graph;
 
 import static com.github.t1.graph.Graph.*;
+import static java.util.Arrays.*;
 
 import java.util.*;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import lombok.Data;
@@ -22,8 +24,17 @@ public class Node<T> {
         return this;
     }
 
+    @SafeVarargs
+    public final boolean isLinkedTo(Node<T>... nodes) {
+        return isLinkedTo(asList(nodes));
+    }
+
     public boolean isLinkedTo(Collection<Node<T>> nodes) {
         return this.links.containsAll(nodes);
+    }
+
+    public boolean hasLinks() {
+        return !links.isEmpty();
     }
 
     public void forEachLink(Consumer<? super Node<T>> consumer) {
@@ -51,9 +62,27 @@ public class Node<T> {
         return marks.contains(mark);
     }
 
+    public boolean isMarked(Class<? extends Mark> type) {
+        return getMark(type).isPresent();
+    }
+
+    public <M extends Mark> Optional<M> unmark(Class<M> type) {
+        Optional<M> mark = getMark(type);
+        mark.ifPresent(m -> marks.remove(m));
+        return mark;
+    }
+
+    public <M extends Mark> Optional<M> getMark(Class<M> type) {
+        return marks.stream()
+                .filter(mark -> type.isInstance(mark))
+                .findAny()
+                .map(mark -> type.cast(mark));
+    }
+
     @Override
     public String toString() {
         return value + (marks.isEmpty() ? "" : marks.toString()) + " -> {" + nodeNames(links) + "}";
     }
+
 }
 
