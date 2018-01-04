@@ -17,7 +17,7 @@ public interface Mark {
     }
 
     @Value
-    public static class StringMark implements Mark {
+    class StringMark implements Mark {
         String string;
 
         @Override
@@ -27,10 +27,8 @@ public interface Mark {
     }
 
     @Value
-    public static class Index implements Mark {
-        public static int of(Node<?> node) {
-            return node.getMark(Index.class).get().getIndex();
-        }
+    class Index implements Mark {
+        public static int of(Node<?> node) { return node.getMark(Index.class).get().getIndex(); }
 
         int index;
     }

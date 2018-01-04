@@ -137,7 +137,7 @@ public class Graph<T> {
 
     public List<Node<T>> remove(Predicate<Node<T>> predicate) {
         List<Node<T>> found = find(predicate);
-        found.forEach(node -> remove(node));
+        found.forEach(this::remove);
         return found;
     }
 

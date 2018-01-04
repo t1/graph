@@ -78,7 +78,7 @@ public class TopologicalSortTest {
         C.linkedTo(A);
         assertThat(graph).as("before").has(nodes(C, B, A));
 
-        Throwable throwable = catchThrowable(() -> graph.topologicalSort());
+        Throwable throwable = catchThrowable(graph::topologicalSort);
 
         assertThat(throwable).has(cycle(B, A, C));
         assertThat(graph).as("after")
@@ -94,7 +94,7 @@ public class TopologicalSortTest {
                 .has(nodes(A))
                 .hasToString("A -> {A}");
 
-        Throwable throwable = catchThrowable(() -> graph.topologicalSort());
+        Throwable throwable = catchThrowable(graph::topologicalSort);
 
         assertThat(throwable).has(cycle(A));
         assertThat(graph).as("after")
@@ -117,7 +117,7 @@ public class TopologicalSortTest {
                 .has(nodes(F, E, D, C, B, A))
                 .hasToString("F -> {F}\nE -> {F, D}\nD -> {E}\nC -> {D, A}\nB -> {C}\nA -> {B}");
 
-        Throwable throwable = catchThrowable(() -> graph.topologicalSort());
+        Throwable throwable = catchThrowable(graph::topologicalSort);
 
         assertThat(throwable)
                 .has(cycle(F))
@@ -145,7 +145,7 @@ public class TopologicalSortTest {
                 .has(nodes(E, D, C, B, A))
                 .hasToString("E -> {B}\nD -> {E}\nC -> {D, A}\nB -> {C}\nA -> {B}");
 
-        Throwable throwable = catchThrowable(() -> graph.topologicalSort());
+        Throwable throwable = catchThrowable(graph::topologicalSort);
 
         assertThat(throwable).has(cycle(A, D, C, B, E));
         assertThat(graph).as("after")

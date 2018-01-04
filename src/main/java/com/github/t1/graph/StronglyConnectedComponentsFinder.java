@@ -17,11 +17,11 @@ import lombok.*;
 class StronglyConnectedComponentsFinder<T> implements Consumer<Node<T>> {
     @Value
     static class Root implements Mark {
-        public static int removeRoot(Node<?> node) {
+        static int removeRoot(Node<?> node) {
             return node.unmark(Root.class).get().getIndex();
         }
 
-        public static int of(Node<?> node) {
+        static int of(Node<?> node) {
             return node.getMark(Root.class).get().getIndex();
         }
 
@@ -37,10 +37,10 @@ class StronglyConnectedComponentsFinder<T> implements Consumer<Node<T>> {
     @Override
     public void accept(Node<T> node) {
         if (!node.isMarked(Index.class))
-            strongconnect(node);
+            strongConnect(node);
     }
 
-    private void strongconnect(Node<T> node) {
+    private void strongConnect(Node<T> node) {
         int indexValue = index.getAndIncrement();
         node.mark(new Index(indexValue));
         node.mark(new Root(indexValue));
@@ -48,7 +48,7 @@ class StronglyConnectedComponentsFinder<T> implements Consumer<Node<T>> {
 
         for (Node<T> successor : node.getLinks()) {
             if (!successor.isMarked(Index.class)) {
-                strongconnect(successor);
+                strongConnect(successor);
                 setRoot(node, Root.of(successor));
             } else if (stack.contains(successor)) {
                 // -> it's in the current SCC

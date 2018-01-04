@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class GraphBuildingTest {
     @Test
-    public void shouldBuildEmpthGraph() {
+    public void shouldBuildEmptyGraph() {
         Graph<String> graph = new Graph<>();
 
         assertThat(graph).hasToString("");

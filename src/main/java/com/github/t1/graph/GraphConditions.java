@@ -42,7 +42,6 @@ public class GraphConditions {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static final Condition<Node<?>> unmarked = (Condition) marked();
 
-    @SafeVarargs
     public static <T> Condition<Node<T>> marked(Mark... marks) {
         return marked(asList(marks));
     }

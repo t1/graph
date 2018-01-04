@@ -74,9 +74,9 @@ public class Node<T> {
 
     public <M extends Mark> Optional<M> getMark(Class<M> type) {
         return marks.stream()
-                .filter(mark -> type.isInstance(mark))
+                .filter(type::isInstance)
                 .findAny()
-                .map(mark -> type.cast(mark));
+                .map(type::cast);
     }
 
     @Override

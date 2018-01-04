@@ -11,7 +11,7 @@ public class CyclesFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> CyclesFoundException(List<List<Node<T>>> cycles) {
+    <T> CyclesFoundException(List<List<Node<T>>> cycles) {
         this.cycles = (List) cycles;
     }
 
