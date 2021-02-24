@@ -3,7 +3,7 @@
 
     <groupId>com.github.t1</groupId>
     <artifactId>graph</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
 
     <name>Directed Graph Algorithms</name>
     <description>A straight forward Graph class with Nodes that support custom Marks.</description>
@@ -17,7 +17,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/t1/graph</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v1.0.2</tag>
         <url>https://github.com/t1/graph</url>
     </scm>
     <licenses>
