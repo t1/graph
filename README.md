@@ -1,4 +1,4 @@
-# Graph ![latest-version](https://maven-badges.herokuapp.com/maven-central/com.github.t1/graph/badge.svg)
+# Graph ![latest-version](https://maven-badges.herokuapp.com/maven-central/com.github.t1/graph/badge.svg) [![Build Status](https://github.com/t1/graph/actions/workflows/maven.yml/badge.svg)](https://github.com/t1/graph/actions/workflows/maven.yml)
 
 A straight forward Graph class with Nodes that support custom Marks.
 
